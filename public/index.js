@@ -16,7 +16,8 @@ socket.on('connect', function(){
 
     socket.on('newMessage', (message) => {
         var li = jQuery('<li></li>');
-        li.text(`${message.from}: ${message.text}`);
+        var formattedTime = moment(message.createAt).format('h:mm a');
+        li.text(`${message.from} ${formattedTime}: ${message.text}`);
         jQuery('#messages').append(li);
     });
 });
