@@ -15,10 +15,17 @@ socket.on('connect', function(){
     console.log("Connected to the server");
 
     socket.on('newMessage', (message) => {
-        var li = jQuery('<li></li>');
+        // var li = jQuery('<li></li>');
         var formattedTime = moment(message.createAt).format('h:mm a');
-        li.text(`${message.from} ${formattedTime}: ${message.text}`);
-        jQuery('#messages').append(li);
+        // li.text(`${message.from} ${formattedTime}: ${message.text}`);
+        // jQuery('#messages').append(li);
+        var template = jQuery('#message-template').html();
+        var html = Mustache.render(template, {
+            text: message.text,
+            from: message.from,
+            createAt: formattedTime
+        });
+        jQuery('#messages').append(html); 
     });
 });
 
