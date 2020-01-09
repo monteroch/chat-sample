@@ -27,6 +27,15 @@ jQuery('#message-form').on('submit', function(e){
 
 socket.on('connect', function(){
     console.log("Connected to the server");
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('join', params, function(err){
+        if(err){
+            alert(err);
+            window.location.href = '/';
+        }else{
+            console.log("No error");
+        }
+    });
 
     socket.on('newMessage', (message) => {
         var formattedTime = moment(message.createAt).format('h:mm a');
@@ -43,4 +52,8 @@ socket.on('connect', function(){
 
 socket.on('disconnect', function(){
     console.log("Disconnected from server");
+});
+
+socket.on('updateUserList', function(users){
+    console.log('User list', users);
 });
