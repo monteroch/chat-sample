@@ -14,17 +14,18 @@ function scrollToBottom(){
     }
 }
 
+//When submit, we emit a createMEssage
 jQuery('#message-form').on('submit', function(e){
     e.preventDefault();
     var messageTextBox = jQuery('[name=message]');
     socket.emit('createMessage', {
-        from: 'User',
         text: messageTextBox.val()
     }, function(){
         messageTextBox.val("");
     })
 })
 
+//When connect we need to join a room
 socket.on('connect', function(){
     console.log("Connected to the server");
     var params = jQuery.deparam(window.location.search);
@@ -36,24 +37,27 @@ socket.on('connect', function(){
             console.log("No error");
         }
     });
-
-    socket.on('newMessage', (message) => {
-        var formattedTime = moment(message.createAt).format('h:mm a');
-        var template = jQuery('#message-template').html();
-        var html = Mustache.render(template, {
-            text: message.text,
-            from: message.from,
-            createAt: formattedTime
-        });
-        jQuery('#messages').append(html); 
-        scrollToBottom();
-    });
 });
 
+//on new message
+socket.on('newMessage', (message) => {
+    var formattedTime = moment(message.createAt).format('h:mm a');
+    var template = jQuery('#message-template').html();
+    var html = Mustache.render(template, {
+        text: message.text,
+        from: message.from,
+        createAt: formattedTime
+    });
+    jQuery('#messages').append(html); 
+    scrollToBottom();
+});
+
+//When the disconected of the server
 socket.on('disconnect', function(){
     console.log("Disconnected from server");
 });
 
+//When updating list
 socket.on('updateUserList', function(users){
     console.log("UserList: ", users);
     var ol = jQuery('<ol></ol>');
